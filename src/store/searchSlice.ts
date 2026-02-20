@@ -7,13 +7,15 @@ interface SearchState {
   destination: string;
   date: string;
   buses: Bus[];
+  allBuses: Bus[];
 }
 
 const initialState: SearchState = {
   source: "",
   destination: "",
   date: "",
-  buses: MOCK_BUSES // Initial Load
+  buses: MOCK_BUSES,
+  allBuses: MOCK_BUSES
 };
 
 const searchSlice = createSlice({
@@ -29,23 +31,24 @@ const searchSlice = createSlice({
       }>
     ) => {
       const { source, destination, date } = action.payload;
+
       state.source = source;
       state.destination = destination;
       state.date = date;
 
-      if (source || destination) {
-        state.buses = MOCK_BUSES.filter((bus) => {
-          const matchSource = source
-            ? bus.source.toLowerCase().includes(source.toLowerCase())
-            : true;
-          const matchDest = destination
-            ? bus.destination.toLowerCase().includes(destination.toLowerCase())
-            : true;
-          return matchSource && matchDest;
-        });
-      } else {
-        state.buses = MOCK_BUSES;
+      if (!source && !destination) {
+        state.buses = state.allBuses;
+        return;
       }
+
+      // Filter ONLY by source and destination to simulate the search
+      state.buses = state.allBuses.filter((bus) => {
+        const matchSource = bus.source.toLowerCase() === source.toLowerCase();
+        const matchDestination =
+          bus.destination.toLowerCase() === destination.toLowerCase();
+
+        return matchSource && matchDestination;
+      });
     },
     confirmBooking: (
       state,
