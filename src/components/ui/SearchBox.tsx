@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { type RootState } from "../../store/store";
 import { MapPin, Calendar, AlertCircle, X } from "lucide-react";
 import { searchBuses } from "../../store/searchSlice";
 
@@ -32,9 +33,17 @@ export default function SearchBox() {
     destination: false,
     date: false
   });
+
   const dispatch = useDispatch();
+  const savedSearch = useSelector((state: RootState) => state.search);
 
   const today = new Date().toISOString().split("T")[0];
+
+  useEffect(() => {
+    if (savedSearch?.source) setSource(savedSearch.source);
+    if (savedSearch?.destination) setDestination(savedSearch.destination);
+    if (savedSearch?.date) setDate(savedSearch.date);
+  }, [savedSearch?.source, savedSearch?.destination, savedSearch?.date]);
 
   const filteredSources =
     source.trim() === ""
