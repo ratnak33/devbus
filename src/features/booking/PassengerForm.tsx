@@ -46,8 +46,9 @@ export default function PassengerForm() {
 
       const newBooking = {
         id: `DB-${Math.floor(100000 + Math.random() * 900000)}`,
-        source: bus.source, // ✅ Now pulls exact source from the bus
-        destination: bus.destination, // ✅ Now pulls exact destination from the bus
+        busId: busId!,
+        source: bus.source,
+        destination: bus.destination,
         date: date || new Date().toISOString().split("T")[0],
         price: totalPrice,
         seats: selectedSeats.map((s) => s.split("-").pop()!),

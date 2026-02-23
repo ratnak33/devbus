@@ -15,6 +15,7 @@ export interface Bus {
 
 export interface Booking {
   id: string;
+  busId: string;
   source: string;
   destination: string;
   date: string;

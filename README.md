@@ -14,7 +14,7 @@ DevBus is a modern, responsive, and feature-rich front-end application for booki
 
 ## 🛠️ Tech Stack
 
-- **Framework:** React 18 + TypeScript + Vite
+- **Framework:** React 19 + TypeScript + Vite
 - **State Management:** Redux Toolkit
 - **Styling:** Tailwind CSS
 - **Icons:** Lucide React

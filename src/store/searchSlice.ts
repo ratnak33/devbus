@@ -54,18 +54,36 @@ const searchSlice = createSlice({
       state,
       action: PayloadAction<{ busId: string; seats: string[] }>
     ) => {
-      const bus = state.buses.find((b) => b.id === action.payload.busId);
-      if (bus) {
-        // 1. Reduce the count
-        bus.seatsAvailable -= action.payload.seats.length;
-
-        // 2. Add the specific seats to the booked array permanently
-        if (!bus.bookedSeats) bus.bookedSeats = [];
-        bus.bookedSeats.push(...action.payload.seats);
-      }
+      const updateBus = (busList: Bus[]) => {
+        const bus = busList.find((b) => b.id === action.payload.busId);
+        if (bus) {
+          bus.seatsAvailable -= action.payload.seats.length;
+          if (!bus.bookedSeats) bus.bookedSeats = [];
+          bus.bookedSeats.push(...action.payload.seats);
+        }
+      };
+      updateBus(state.buses);
+      updateBus(state.allBuses);
+    },
+    releaseSeats: (
+      state,
+      action: PayloadAction<{ busId: string; seats: string[] }>
+    ) => {
+      const updateBus = (busList: Bus[]) => {
+        const bus = busList.find((b) => b.id === action.payload.busId);
+        if (bus) {
+          bus.seatsAvailable += action.payload.seats.length;
+          bus.bookedSeats = bus.bookedSeats.filter(
+            (seat) => !action.payload.seats.includes(seat)
+          );
+        }
+      };
+      updateBus(state.buses);
+      updateBus(state.allBuses);
     }
   }
 });
 
-export const { searchBuses, confirmBooking } = searchSlice.actions;
+export const { searchBuses, confirmBooking, releaseSeats } =
+  searchSlice.actions;
 export default searchSlice.reducer;

@@ -272,6 +272,7 @@ export default function SearchBox() {
               setDate(e.target.value);
               if (errors.date) setErrors((prev) => ({ ...prev, date: false }));
             }}
+            placeholder="MM/DD/YYYY"
           />
           <label
             className={`absolute left-14 top-2 text-[8px] font-black uppercase tracking-widest pointer-events-none hidden lg:block ${errors.date ? "text-red-500" : "text-gray-400"}`}
@@ -294,7 +295,7 @@ export default function SearchBox() {
 
           <button
             type="submit"
-            className="bg-[#d84e55] hover:bg-[#c03940] text-white flex-1 md:w-40 py-4 md:py-0 font-black text-sm uppercase tracking-widest flex items-center justify-center transition-all"
+            className="bg-[#d84e55] rounded-lg hover:bg-[#c03940] text-white flex-1 md:w-40 py-4 md:py-0 font-black text-sm uppercase tracking-widest flex items-center justify-center transition-all"
           >
             SEARCH
           </button>

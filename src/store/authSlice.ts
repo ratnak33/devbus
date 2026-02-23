@@ -1,14 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-
-interface Booking {
-  id: string;
-  source: string;
-  destination: string;
-  date: string;
-  price: number;
-  seats: string[];
-  status: "Confirmed" | "Cancelled";
-}
+import { type Booking } from "../types/bus";
 
 interface UserProfile {
   name: string;
@@ -96,10 +87,29 @@ const authSlice = createSlice({
         }
         state.bookingsByUser[userEmail].unshift(action.payload);
       }
+    },
+
+    cancelBooking: (state, action: PayloadAction<{ bookingId: string }>) => {
+      if (!state.user) return;
+
+      const userEmail = state.user.email;
+      const bookings = state.bookingsByUser[userEmail];
+      if (!bookings) return;
+
+      const booking = bookings.find((b) => b.id === action.payload.bookingId);
+      if (booking && booking.status === "Confirmed") {
+        booking.status = "Cancelled";
+      }
     }
   }
 });
 
-export const { register, login, logout, addBooking, clearError } =
-  authSlice.actions;
+export const {
+  register,
+  login,
+  logout,
+  addBooking,
+  clearError,
+  cancelBooking
+} = authSlice.actions;
 export default authSlice.reducer;
