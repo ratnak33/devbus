@@ -1,17 +1,12 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 
 import Hero from "../features/search/Hero";
 import BusCard from "../components/ui/BusCard";
+import Pagination from "../components/ui/Pagination";
 
-import {
-  SlidersHorizontal,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Filter
-} from "lucide-react";
+import { SlidersHorizontal, X, Filter } from "lucide-react";
 
 export default function HomePage() {
   const { buses } = useSelector((state: RootState) => state.search);
@@ -20,8 +15,9 @@ export default function HomePage() {
   const [filterType, setFilterType] = useState<string>("All");
   const [priceRange, setPriceRange] = useState<number>(2000);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showMobileFilters, setShowMobileFilters] = useState(false); // NEW STATE FOR MOBILE
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const itemsPerPage = 5;
+  const busListRef = useRef<HTMLElement>(null);
 
   const processedBuses = useMemo(() => {
     let result = [...buses];
@@ -159,7 +155,7 @@ export default function HomePage() {
             </div>
           </aside>
 
-          <section className="flex-1">
+          <section ref={busListRef} className="flex-1">
             <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="text-gray-500 font-bold text-sm">
                 Showing{" "}
@@ -219,39 +215,17 @@ export default function HomePage() {
             </div>
 
             {processedBuses.length > itemsPerPage && (
-              <div className="mt-10 flex justify-center gap-2">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => p - 1)}
-                  className="p-3 bg-white border border-gray-200 rounded-xl hover:border-primary hover:text-primary disabled:opacity-50 disabled:hover:border-gray-200 disabled:hover:text-gray-400 transition-all shadow-sm"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`w-11 h-11 rounded-xl font-black text-sm flex items-center justify-center transition-all shadow-sm ${
-                        currentPage === page
-                          ? "bg-primary text-white shadow-primary/30 scale-110"
-                          : "bg-white border border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  )
-                )}
-
-                <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => p + 1)}
-                  className="p-3 bg-white border border-gray-200 rounded-xl hover:border-primary hover:text-primary disabled:opacity-50 disabled:hover:border-gray-200 disabled:hover:text-gray-400 transition-all shadow-sm"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setCurrentPage(page);
+                  busListRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                  });
+                }}
+              />
             )}
           </section>
         </div>
